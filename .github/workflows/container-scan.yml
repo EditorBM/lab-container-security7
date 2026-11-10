@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
@@ -26,8 +31,13 @@ jobs:
           scanners: 'vuln,secret,config'
 
       - name: Run Trivy config scanner for K8s manifests
-        run: |
-          trivy config --severity HIGH,CRITICAL --exit-code 1 k8s/
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'k8s/'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          format: 'table'
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3

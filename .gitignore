@@ -1,0 +1,4 @@
+trivy-*.txt
+grype-*.txt
+*.sarif
+node_modules/
